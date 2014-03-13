@@ -14,12 +14,18 @@ namespace WeiboCrawler
     {
         WeiboMainForm mainForm;
         uint uid;
+        uint oid;
 
         public WeiboBrowser()
         {
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Constructor of WeiboBrowser
+        /// </summary>
+        /// <param name="__callingForm">The calling form (should be an Instance of WeiboMainForm)</param>
+        /// <param name="__uri">The default browser URI</param>
         public WeiboBrowser(Form __callingForm, string __uri)
         {
             mainForm = __callingForm as WeiboMainForm;
@@ -43,12 +49,17 @@ namespace WeiboCrawler
             //throw new NotImplementedException();
             if (e.Url == webBrowser1.Document.Url)
             {
-                uid = WeiboWeb.GetOID(webBrowser1.DocumentText);
-                tbOID.Text = uid.ToString();
+                uid = WeiboWeb.GetUID(webBrowser1.DocumentText);
+                oid = WeiboWeb.GetOID(webBrowser1.DocumentText);
+                tbOID.Text = oid.ToString();
                 tbNick.Text = WeiboWeb.GetONick(webBrowser1.DocumentText);
                 if (uid > 0)
                 {
                     btnOk.Enabled = true;
+                }
+                else
+                {
+                    btnOk.Enabled = false;
                 }
             }
         }
@@ -57,7 +68,8 @@ namespace WeiboCrawler
         {
             if (uid > 0)
             {
-                mainForm.SetUID(uid);
+                mainForm.SetCrawlerUID(uid);
+                mainForm.SetCenterUID(oid);
             }
             this.Close();
         }
@@ -74,6 +86,8 @@ namespace WeiboCrawler
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
+            //Using Navigate function to fire a DocumentCompleted event
+            //Instead of Refresh function which just reload the document but not necessarily redownload the document
             webBrowser1.Navigate(webBrowser1.Url.ToString());
         }
     }
