@@ -14,10 +14,12 @@ namespace WeiboCrawler
     {
         WeiboMainForm mainForm;
         uint uid;
+
         public WeiboBrowser()
         {
             InitializeComponent();
         }
+
         public WeiboBrowser(Form __callingForm, string __uri)
         {
             mainForm = __callingForm as WeiboMainForm;
@@ -25,6 +27,7 @@ namespace WeiboCrawler
             webBrowser1.Navigate(__uri);
             webBrowser1.DocumentCompleted += webBrowser1_DocumentCompleted;
             webBrowser1.NewWindow += webBrowser1_NewWindow;
+            
         }
 
         void webBrowser1_NewWindow(object sender, CancelEventArgs e)
@@ -49,6 +52,7 @@ namespace WeiboCrawler
                 }
             }
         }
+
         private void btnOk_Click(object sender, EventArgs e)
         {
             if (uid > 0)
@@ -70,7 +74,7 @@ namespace WeiboCrawler
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
-            webBrowser1.Refresh();
+            webBrowser1.Navigate(webBrowser1.Url.ToString());
         }
     }
 
