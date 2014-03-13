@@ -24,6 +24,15 @@ namespace WeiboCrawler
             InitializeComponent();
             webBrowser1.Navigate(__uri);
             webBrowser1.DocumentCompleted += webBrowser1_DocumentCompleted;
+            webBrowser1.NewWindow += webBrowser1_NewWindow;
+        }
+
+        void webBrowser1_NewWindow(object sender, CancelEventArgs e)
+        {
+            //throw new NotImplementedException();
+            string url = ((WebBrowser)sender).Document.ActiveElement.GetAttribute("href");
+            e.Cancel = true;
+            ((WebBrowser)sender).Navigate(url);
         }
 
         void webBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
