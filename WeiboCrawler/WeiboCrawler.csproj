@@ -67,6 +67,9 @@
     </Compile>
     <Compile Include="WeiboUser.cs" />
     <Compile Include="WeiboWeb.cs" />
+    <Compile Include="WeiboWebClient.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
