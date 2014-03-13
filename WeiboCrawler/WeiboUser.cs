@@ -7,12 +7,19 @@ using System.Threading.Tasks;
 
 namespace WeiboCrawler
 {
+    /// <summary>
+    /// 
+    /// </summary>
     class WeiboUser
     {
         private uint _uid;
         private uint _followerId;
         private string _fnick;
         private char _sex;
+
+        /// <summary>
+        /// User's uid
+        /// </summary>
         public uint UID
         {
             get
@@ -20,6 +27,10 @@ namespace WeiboCrawler
                 return _uid;
             }
         }
+
+        /// <summary>
+        /// User's nickname
+        /// </summary>
         public string FNick
         {
             get
@@ -27,6 +38,10 @@ namespace WeiboCrawler
                 return _fnick;
             }
         }
+        
+        /// <summary>
+        /// User's gender
+        /// </summary>
         public char Sex
         {
             get
@@ -34,6 +49,14 @@ namespace WeiboCrawler
                 return _sex;
             }
         }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="__uid">User's uid</param>
+        /// <param name="__fnick">User's nickname</param>
+        /// <param name="__sex">User's gender</param>
+        /// <param name="__followerId">User's follower's uid</param>
         public WeiboUser(uint __uid, string __fnick, char __sex, uint __followerId)
         {
             _uid = __uid;
@@ -41,6 +64,12 @@ namespace WeiboCrawler
             _sex = __sex;
             _followerId = __followerId;
         }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="__regexMatchUser">Match found by Regex WeiboWeb._rx_li</param>
+        /// <param name="__followerId">follower's uid</param>
         public WeiboUser(Match __regexMatchUser, uint __followerId)
         {
             _followerId = __followerId;
