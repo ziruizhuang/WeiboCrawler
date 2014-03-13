@@ -43,25 +43,28 @@ namespace WeiboCrawler
             + Regex.Escape(@""">"),
             RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Multiline);
         static private Regex _rx_uid = new Regex(
-            @"^"
-            +Regex.Escape(@"$CONFIG['uid'] = '")
+            @"^\s*"
+            + Regex.Escape(@"$CONFIG['uid']")
+            + @"(\s*=\s*')"//Do compability for white space
             + @"(?<uid>\d{10})"
-            +Regex.Escape(@"';")
-            +@"$",
+            + Regex.Escape(@"';")
+            + @"\s*$",
             RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Multiline);
         static private Regex _rx_oid = new Regex(
-            @"^"
-            + Regex.Escape(@"$CONFIG['oid'] = '")
+            @"^\s*"
+            + Regex.Escape(@"$CONFIG['oid']")
+            + @"(\s*=\s*')"//Do compability for white space
             + @"(?<oid>\d{10})"
             + Regex.Escape(@"';")
-            + @"$",
+            + @"\s*$",
             RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Multiline);
         static private Regex _rx_onick = new Regex(
-            @"^"
-            + Regex.Escape(@"$CONFIG['onick'] = '")
+            @"^\s*"
+            + Regex.Escape(@"$CONFIG['onick']")
+            + @"(\s*=\s*')"//Do compability for white space
             + @"(?<onick>.*)"
             + Regex.Escape(@"';")
-            + @"$",
+            + @"\s*$",
             RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Multiline);
         static public MatchCollection ParseHtml(ref  string __text)
         {
