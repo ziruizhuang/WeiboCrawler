@@ -66,12 +66,23 @@ namespace WeiboCrawler
 
         private void btnOk_Click(object sender, EventArgs e)
         {
-            if (_uid > 0)
+            if (_uid > 0 && _oid > 0)
             {
-                _mainForm.SetCrawlerUID(_uid);
-                _mainForm.SetCenterUID(_oid);
+                if (_uid != _oid)
+                {
+                    _mainForm.SetCrawlerUID(_uid);
+                    _mainForm.SetCenterUID(_oid);
+                    this.Close();
+                }
+                else
+                {
+                    MessageBox.Show
+                    (
+                        "Crawling is against Weibo's Term of Use. It's highly recommended that use a stand alone account for crawling to avoid any possible punishment or other unhappy events. \n"
+                        + "At this point it's detected that the same user account is selected as center vertex and crawler. Please examine and fix it.", "Warning"
+                    );
+                }
             }
-            this.Close();
         }
 
         private void WeiboBrowser_Load(object sender, EventArgs e)
