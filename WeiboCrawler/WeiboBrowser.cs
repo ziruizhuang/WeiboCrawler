@@ -12,9 +12,9 @@ namespace WeiboCrawler
 {
     public partial class WeiboBrowser : Form
     {
-        WeiboMainForm mainForm;
-        uint uid;
-        uint oid;
+        WeiboMainForm _mainForm;
+        uint _uid;
+        uint _oid;
 
         public WeiboBrowser()
         {
@@ -28,7 +28,7 @@ namespace WeiboCrawler
         /// <param name="__uri">The default browser URI</param>
         public WeiboBrowser(Form __callingForm, string __uri)
         {
-            mainForm = __callingForm as WeiboMainForm;
+            _mainForm = __callingForm as WeiboMainForm;
             InitializeComponent();
             webBrowser1.Navigate(__uri);
             webBrowser1.DocumentCompleted += webBrowser1_DocumentCompleted;
@@ -49,11 +49,11 @@ namespace WeiboCrawler
             //throw new NotImplementedException();
             if (e.Url == webBrowser1.Document.Url)
             {
-                uid = WeiboWeb.GetUID(webBrowser1.DocumentText);
-                oid = WeiboWeb.GetOID(webBrowser1.DocumentText);
-                tbOID.Text = oid.ToString();
+                _uid = WeiboWeb.GetUID(webBrowser1.DocumentText);
+                _oid = WeiboWeb.GetOID(webBrowser1.DocumentText);
+                tbOID.Text = _oid.ToString();
                 tbNick.Text = WeiboWeb.GetONick(webBrowser1.DocumentText);
-                if (uid > 0)
+                if (_uid > 0)
                 {
                     btnOk.Enabled = true;
                 }
@@ -66,10 +66,10 @@ namespace WeiboCrawler
 
         private void btnOk_Click(object sender, EventArgs e)
         {
-            if (uid > 0)
+            if (_uid > 0)
             {
-                mainForm.SetCrawlerUID(uid);
-                mainForm.SetCenterUID(oid);
+                _mainForm.SetCrawlerUID(_uid);
+                _mainForm.SetCenterUID(_oid);
             }
             this.Close();
         }
