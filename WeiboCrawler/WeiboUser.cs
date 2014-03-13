@@ -12,10 +12,10 @@ namespace WeiboCrawler
     /// </summary>
     class WeiboUser
     {
-        private uint _uid;
-        private uint _followerId;
-        private string _fnick;
-        private char _sex;
+        private uint _uid=0;
+        private uint _followerId=0;
+        private string _fnick="";
+        private char _sex='?';
 
         /// <summary>
         /// User's uid
@@ -86,7 +86,9 @@ namespace WeiboCrawler
         }
         public void StoreSQLite()
         {
-            throw new Exception("Not Implemented");
+            //throw new Exception("Not Implemented");
+            Console.WriteLine(String.Format("Store: {0},{1},{2},{3}",_followerId,_uid,_fnick,_sex));
+
         }
     }
 }

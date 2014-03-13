@@ -67,7 +67,7 @@ namespace WeiboCrawler
             + Regex.Escape(@"';")
             + @"\s*$",
             RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Multiline);
-        static public MatchCollection ParseHtml(ref  string __text)
+        static public MatchCollection ParseHtml(string __text)
         {
             // Find matches.
             MatchCollection htmls = _rx_html.Matches(__text);

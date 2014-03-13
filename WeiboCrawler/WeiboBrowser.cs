@@ -72,6 +72,7 @@ namespace WeiboCrawler
                 {
                     _mainForm.SetCrawlerUID(_uid);
                     _mainForm.SetCenterUID(_oid);
+                    _mainForm.SetCookie(webBrowser1.Document.Cookie);
                     this.Close();
                 }
                 else
