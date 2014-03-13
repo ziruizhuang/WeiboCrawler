@@ -13,8 +13,8 @@ namespace WeiboCrawler
     public partial class WeiboBrowser : Form
     {
         WeiboMainForm _mainForm;
-        uint _uid;
-        uint _oid;
+        ulong _uid;
+        ulong _oid;
 
         public WeiboBrowser()
         {

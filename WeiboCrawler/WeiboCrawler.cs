@@ -10,30 +10,30 @@ namespace WeiboCrawler
 {
     class WeiboCrawler
     {
-        private uint _uid = 0;
+        private ulong _uid = 0;
         private int _depth = 2;
-        private HashSet<uint> _scannedList;
+        private HashSet<ulong> _scannedList;
         private string _cookie = "";
 
 
-        public WeiboCrawler(uint __uid)
+        public WeiboCrawler(ulong __uid)
         {
             _uid = __uid;
             _depth = 2;
-            _scannedList = new HashSet<uint>();
+            _scannedList = new HashSet<ulong>();
         }
-        public WeiboCrawler(uint __uid, int __depth)
+        public WeiboCrawler(ulong __uid, int __depth)
         {
             _uid = __uid;
             _depth = __depth;
-            _scannedList = new HashSet<uint>();
+            _scannedList = new HashSet<ulong>();
         }
         /// <summary>
         /// Find users with control of depth and searching list
         /// </summary>
         /// <param name="__depth">current searching depth</param>
         /// <param name="__current">current searching list</param>
-        private void _findUsers(int __depth, ref List<uint> __current)
+        private void _findUsers(int __depth, ref List<ulong> __current)
         {
             Console.WriteLine(String.Format("WeiboCrawler: _findUsers() at __depth = {0}",__depth));
 
@@ -44,8 +44,8 @@ namespace WeiboCrawler
             }
             else
             {
-                List<uint> next = new List<uint>();             
-                foreach (uint uid in __current)
+                List<ulong> next = new List<ulong>();             
+                foreach (ulong uid in __current)
                 {
                     //TODO: BFS
                     _findUser(uid, ref next);
@@ -59,7 +59,7 @@ namespace WeiboCrawler
         /// </summary>
         /// <param name="__source">The user uid being searched</param>
         /// <param name="__next">The next searching list</param>
-        private void _findUser(uint __source, ref List<uint> __next)
+        private void _findUser(ulong __source, ref List<ulong> __next)
         {
             Console.WriteLine(String.Format("WeiboCrawler: _findUser() at __source = {0}", __source));
             if (_scannedList.Contains(__source))
@@ -87,13 +87,13 @@ namespace WeiboCrawler
         public void FindUsers()
         {
             Console.WriteLine("WeiboCrawler: FindUsers()");
-            List<uint> current = new List<uint>();
+            List<ulong> current = new List<ulong>();
             current.Add(_uid);
             _findUsers(0, ref current);
             Console.WriteLine("WeiboCrawler: Crawling Ended");
         }
 
-        private string getUserFollowingListHtml(uint __uid)
+        private string getUserFollowingListHtml(ulong __uid)
         {
             if (__uid > 0)
             {
@@ -105,7 +105,9 @@ namespace WeiboCrawler
                 client.SetCookies(_cookie);
 
                 //Task<string> task = client.DownloadStringTaskAsync(WeiboWeb.GetFollowUri(__uid));
-                return client.DownloadString(WeiboWeb.GetFollowUri(__uid));
+                string str = client.DownloadString(WeiboWeb.GetFollowUri(__uid));
+                Console.WriteLine(client.ResponseHeaders.ToString());
+                return str;
             }
             else
             {

@@ -12,15 +12,15 @@ namespace WeiboCrawler
     /// </summary>
     class WeiboUser
     {
-        private uint _uid=0;
-        private uint _followerId=0;
+        private ulong _uid=0;
+        private ulong _followerId=0;
         private string _fnick="";
         private char _sex='?';
 
         /// <summary>
         /// User's uid
         /// </summary>
-        public uint UID
+        public ulong UID
         {
             get
             {
@@ -57,7 +57,7 @@ namespace WeiboCrawler
         /// <param name="__fnick">User's nickname</param>
         /// <param name="__sex">User's gender</param>
         /// <param name="__followerId">User's follower's uid</param>
-        public WeiboUser(uint __uid, string __fnick, char __sex, uint __followerId)
+        public WeiboUser(ulong __uid, string __fnick, char __sex, ulong __followerId)
         {
             _uid = __uid;
             _fnick = __fnick;
@@ -70,12 +70,12 @@ namespace WeiboCrawler
         /// </summary>
         /// <param name="__regexMatchUser">Match found by Regex WeiboWeb._rx_li</param>
         /// <param name="__followerId">follower's uid</param>
-        public WeiboUser(Match __regexMatchUser, uint __followerId)
+        public WeiboUser(Match __regexMatchUser, ulong __followerId)
         {
             _followerId = __followerId;
             try
             {
-                _uid = uint.Parse(Regex.Unescape(__regexMatchUser.Groups["uid"].Value));
+                _uid = ulong.Parse(Regex.Unescape(__regexMatchUser.Groups["uid"].Value));
                 _fnick = Regex.Unescape(__regexMatchUser.Groups["fnick"].Value);
                 _sex = Regex.Unescape(__regexMatchUser.Groups["sex"].Value)[0];
             }

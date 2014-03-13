@@ -18,11 +18,11 @@ namespace WeiboCrawler
                 return _baseUri;
             }
         }
-        static public string GetFollowUri(uint __uid)
+        static public string GetFollowUri(ulong __uid)
         {
             return _baseUri + __uid.ToString() + @"/follow";
         }
-        static public string GetFansUri(uint __uid)
+        static public string GetFansUri(ulong __uid)
         {
             return _baseUri + __uid.ToString() + @"/fans";
         }
@@ -89,22 +89,22 @@ namespace WeiboCrawler
             }
             return null;
         }
-        static public uint GetUID(string __text)
+        static public ulong GetUID(string __text)
         {
             try
             {
-                return uint.Parse(_rx_uid.Match(__text).Groups["uid"].Value);
+                return ulong.Parse(_rx_uid.Match(__text).Groups["uid"].Value);
             }
             catch
             {
                 return 0;
             }
         }
-        static public uint GetOID(string __text)
+        static public ulong GetOID(string __text)
         {
             try
             {
-                return uint.Parse(_rx_oid.Match(__text).Groups["oid"].Value);
+                return ulong.Parse(_rx_oid.Match(__text).Groups["oid"].Value);
             }
             catch
             {
