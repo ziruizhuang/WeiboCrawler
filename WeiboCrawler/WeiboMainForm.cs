@@ -71,5 +71,20 @@ namespace WeiboCrawler
             Console.WriteLine("WeiboMainForm: Crawler Run");
             _crawler.FindUsers();
         }
+
+        private void getUserAgent()
+        {
+
+            string js = @"<script type='text/javascript'>function getUserAgent(){document.write(navigator.userAgent)}</script>";
+
+            WebBrowser wb = new WebBrowser();
+            wb.Url = new Uri("about:blank");
+            wb.Document.Write(js);
+            wb.Document.InvokeScript("getUserAgent");
+
+            string userAgent = wb.DocumentText.Substring(js.Length);
+
+            System.Console.WriteLine(userAgent);
+        }
     }
 }

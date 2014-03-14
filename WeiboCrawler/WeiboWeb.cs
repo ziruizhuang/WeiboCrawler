@@ -20,11 +20,11 @@ namespace WeiboCrawler
         }
         static public string GetFollowUri(ulong __uid)
         {
-            return _baseUri + __uid.ToString() + @"/follow";
+            return _baseUri + __uid.ToString() + @"/follow?retcode=6102";
         }
         static public string GetFansUri(ulong __uid)
         {
-            return _baseUri + __uid.ToString() + @"/fans";
+            return _baseUri + __uid.ToString() + @"/fans?retcode=6102";
         }
         static private Regex _rx_html = new Regex(
             @"^<SCRIPT>FM.view\(.*""domid"":""Pl_Official_LeftHisRelation__25"".*""html"":""(?<html>.*)""}\)</SCRIPT>$",
