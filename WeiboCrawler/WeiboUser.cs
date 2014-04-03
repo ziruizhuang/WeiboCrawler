@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace WeiboCrawler
 {
@@ -88,6 +89,14 @@ namespace WeiboCrawler
         {
             //throw new Exception("Not Implemented");
             Console.WriteLine(String.Format("Store: {0},{1},{2},{3}",_followerId,_uid,_fnick,_sex));
+        }
+        public void StoreText()
+        {
+            FileStream fs = new FileStream("users.log",FileMode.Append);
+            StreamWriter sw = new StreamWriter(fs);
+            sw.WriteLine(String.Format("{0},{1}", _followerId, _uid, _fnick, _sex));
+            sw.Close();
+            fs.Close();
 
         }
     }

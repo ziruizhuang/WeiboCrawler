@@ -20,14 +20,14 @@ namespace WeiboCrawler
         }
         static public string GetFollowUri(ulong __uid)
         {
-            return _baseUri + __uid.ToString() + @"/follow?retcode=6102";
+            return _baseUri + __uid.ToString() + @"/follow";
         }
         static public string GetFansUri(ulong __uid)
         {
             return _baseUri + __uid.ToString() + @"/fans?retcode=6102";
         }
         static private Regex _rx_html = new Regex(
-            @"^<SCRIPT>FM.view\(.*""domid"":""Pl_Official_LeftHisRelation__25"".*""html"":""(?<html>.*)""}\)</SCRIPT>$",
+            @"^<SCRIPT>FM.view\(.*""domid"":""Pl_Official_LeftHisRelation__\d{2}"".*""html"":""(?<html>.*)""}\)</SCRIPT>$",
             RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Multiline);
         static private Regex _rx_ul = new Regex(
             Regex.Escape(@"<ul class=""cnfList"" node-type=""userListBox"">")
@@ -67,7 +67,59 @@ namespace WeiboCrawler
             + Regex.Escape(@"';")
             + @"\s*$",
             RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Multiline);
+
+        static private Regex _rx_next = new Regex(
+            Regex.Escape(@"<a bpfilter=""page"" class=""W_btn_c"" href=""")
+            + @"(?<url>.*)"
+            + Regex.Escape(@"""><span>下一页</span></a>"),
+            RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline);
+
+
         static public MatchCollection ParseHtml(string __text)
+        {
+            try
+            {
+                // Find matches.
+                MatchCollection htmls = _rx_html.Matches(__text);
+
+                if (htmls!=null&&htmls.Count > 0)
+                {
+                    // Report on each match. 
+                    foreach (Match html in htmls)
+                    {
+                        __text = Regex.Unescape(html.Groups["html"].Value);
+
+                        // Find matches.
+                        MatchCollection uls = _rx_ul.Matches(__text);
+                        if (uls != null && uls.Count > 0)
+                        {
+                            foreach (Match ul in uls)
+                            {
+                                //__text = Regex.Unescape(ul.Groups["ul"].Value);
+                                __text = ul.Groups["ul"].Value;
+                                // Find matches.
+                                return _rx_li.Matches(__text);
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Recognizable Ul Section Not Found.");
+                        }
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Recognizable Html Section Not Found.");
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("Exception in WeiboWeb.ParseHtml");
+                Console.WriteLine(ex.Message);
+            }
+            return null;
+        }
+        static public String FindNextPage(string __text)
         {
             // Find matches.
             MatchCollection htmls = _rx_html.Matches(__text);
@@ -78,13 +130,13 @@ namespace WeiboCrawler
                 __text = Regex.Unescape(html.Groups["html"].Value);
 
                 // Find matches.
-                MatchCollection uls = _rx_ul.Matches(__text);
+                MatchCollection nexts = _rx_next.Matches(__text);
 
-                foreach (Match ul in uls)
+                foreach (Match next in nexts)
                 {
-                    __text = Regex.Unescape(ul.Groups["ul"].Value);
+                    __text = Regex.Unescape(next.Groups["url"].Value);
                     // Find matches.
-                    return _rx_li.Matches(__text);
+                    return __text;
                 }
             }
             return null;

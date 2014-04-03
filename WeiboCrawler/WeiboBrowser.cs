@@ -30,10 +30,29 @@ namespace WeiboCrawler
         {
             _mainForm = __callingForm as WeiboMainForm;
             InitializeComponent();
-            webBrowser1.Navigate(__uri);
             webBrowser1.DocumentCompleted += webBrowser1_DocumentCompleted;
+            webBrowser1.Navigated += webBrowser1_Navigated;
             webBrowser1.NewWindow += webBrowser1_NewWindow;
-            
+            webBrowser1.ScriptErrorsSuppressed = true;
+            webBrowser1.Navigate(__uri);
+        }
+
+        void webBrowser1_Navigated(object sender, WebBrowserNavigatedEventArgs e)
+        {
+            //throw new NotImplementedException();
+            try
+            {
+                _mainForm.SetCookie(webBrowser1.Url,webBrowser1.Document.Cookie);
+                Console.WriteLine("**** -INFO-: webBrowser1.Navigated *********");
+                Console.WriteLine("** URI: *********");
+                Console.WriteLine(": " + webBrowser1.Document.Url);
+                Console.WriteLine("** Cookie: *********");
+                Console.WriteLine(": "+webBrowser1.Document.Cookie);
+            }
+            catch
+            {
+                Console.WriteLine("webBrowser1.Navigated get cookie failed");
+            }
         }
 
         void webBrowser1_NewWindow(object sender, CancelEventArgs e)
@@ -72,7 +91,7 @@ namespace WeiboCrawler
                 {
                     _mainForm.SetCrawlerUID(_uid);
                     _mainForm.SetCenterUID(_oid);
-                    _mainForm.SetCookie(webBrowser1.Document.Cookie);
+                    //_mainForm.SetCookie(webBrowser1.Document.Cookie);
                     this.Close();
                 }
                 else

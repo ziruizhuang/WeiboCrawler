@@ -16,7 +16,7 @@ namespace WeiboCrawler
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new WeiboMainForm());
+             Application.Run(new WeiboMainForm());
         }
     }
 }
