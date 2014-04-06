@@ -39,10 +39,8 @@ namespace WeiboCrawler
 
         void webBrowser1_Navigated(object sender, WebBrowserNavigatedEventArgs e)
         {
-            //throw new NotImplementedException();
             try
             {
-                _mainForm.SetCookie(webBrowser1.Url,webBrowser1.Document.Cookie);
                 Console.WriteLine("**** -INFO-: webBrowser1.Navigated *********");
                 Console.WriteLine("** URI: *********");
                 Console.WriteLine(": " + webBrowser1.Document.Url);
@@ -57,7 +55,6 @@ namespace WeiboCrawler
 
         void webBrowser1_NewWindow(object sender, CancelEventArgs e)
         {
-            //throw new NotImplementedException();
             string url = ((WebBrowser)sender).Document.ActiveElement.GetAttribute("href");
             e.Cancel = true;
             ((WebBrowser)sender).Navigate(url);
@@ -65,7 +62,6 @@ namespace WeiboCrawler
 
         void webBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
-            //throw new NotImplementedException();
             if (e.Url == webBrowser1.Document.Url)
             {
                 _uid = WeiboWeb.GetUID(webBrowser1.DocumentText);
@@ -91,7 +87,6 @@ namespace WeiboCrawler
                 {
                     _mainForm.SetCrawlerUID(_uid);
                     _mainForm.SetCenterUID(_oid);
-                    //_mainForm.SetCookie(webBrowser1.Document.Cookie);
                     this.Close();
                 }
                 else

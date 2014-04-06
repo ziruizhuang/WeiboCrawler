@@ -69,7 +69,7 @@ namespace WeiboCrawler
             RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Multiline);
 
         static private Regex _rx_next = new Regex(
-            Regex.Escape(@"<a bpfilter=""page"" class=""W_btn_c"" href=""")
+            Regex.Escape(@"class=""W_btn_c"" href=""")
             + @"(?<url>.*)"
             + Regex.Escape(@"""><span>下一页</span></a>"),
             RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline);
@@ -121,23 +121,32 @@ namespace WeiboCrawler
         }
         static public String FindNextPage(string __text)
         {
-            // Find matches.
-            MatchCollection htmls = _rx_html.Matches(__text);
-
-            // Report on each match. 
-            foreach (Match html in htmls)
+            try
             {
-                __text = Regex.Unescape(html.Groups["html"].Value);
 
                 // Find matches.
-                MatchCollection nexts = _rx_next.Matches(__text);
+                MatchCollection htmls = _rx_html.Matches(__text);
 
-                foreach (Match next in nexts)
+                // Report on each match. 
+                foreach (Match html in htmls)
                 {
-                    __text = Regex.Unescape(next.Groups["url"].Value);
+                    __text = Regex.Unescape(html.Groups["html"].Value);
+
                     // Find matches.
-                    return __text;
+                    MatchCollection nexts = _rx_next.Matches(__text);
+
+                    foreach (Match next in nexts)
+                    {
+                        __text = Regex.Unescape(next.Groups["url"].Value);
+                        // Find matches.
+                        return __text;
+                    }
                 }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("Exception in WeiboWeb.FindNextPage");
+                Console.WriteLine(ex.Message);
             }
             return null;
         }

@@ -92,12 +92,18 @@ namespace WeiboCrawler
         }
         public void StoreText()
         {
-            FileStream fs = new FileStream("users.log",FileMode.Append);
-            StreamWriter sw = new StreamWriter(fs);
-            sw.WriteLine(String.Format("{0},{1}", _followerId, _uid, _fnick, _sex));
-            sw.Close();
-            fs.Close();
-
+            try
+            {
+                FileStream fs = new FileStream("users.log", FileMode.Append);
+                StreamWriter sw = new StreamWriter(fs);
+                sw.WriteLine(String.Format("{0},{1}", _followerId, _uid, _fnick, _sex));
+                sw.Close();
+                fs.Close();
+            }
+            catch
+            {
+                Console.WriteLine("Exception in WeiboUser.StoreText()");
+            }
         }
     }
 }

@@ -14,9 +14,16 @@ namespace WeiboCrawler
         [STAThread]
         static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-             Application.Run(new WeiboMainForm());
+            try
+            {
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                Application.Run(new WeiboMainForm());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception in Program");
+            }
         }
     }
 }

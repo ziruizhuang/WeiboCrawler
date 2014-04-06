@@ -51,16 +51,9 @@ namespace WeiboCrawler
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            new WeiboBrowser(this, WeiboWeb.BaseUri).ShowDialog();
-        }
-
-        /// <summary>
-        /// Set the cookies of crawler
-        /// </summary>
-        /// <param name="__cookie">The crawler's cookies</param>
-        public void SetCookie(Uri __uri, string __cookie)
-        {
-            _crawler.SetCookies(__uri,__cookie);
+            //new WeiboBrowser(this, WeiboWeb.BaseUri).ShowDialog();
+            new WeiboBrowser(this, "http://weibo.com/p/1005052265894862/follow?pids=Pl_Official_LeftHisRelation__25&page=11").ShowDialog();
+            
         }
 
         private void btnRun_Click(object sender, EventArgs e)
@@ -68,6 +61,7 @@ namespace WeiboCrawler
             Console.WriteLine("WeiboMainForm: Crawler Init");
             //_crawler = new WeiboCrawler(_uid_center, 3);
             _crawler.UID = _uid_center;
+            _crawler.CrawlerUID = _uid_crawler;
             _crawler.Depth = 3;
             //_crawler = new WeiboCrawler(2265894862, 3);
             
@@ -100,7 +94,7 @@ namespace WeiboCrawler
             //Console.Write(html);
             WebBrowser b = new WebBrowser();
             b.Hide();
-            b.Navigate("http://weibo.com/p/1005052265894862/follow?page=7#place");
+            b.Navigate("http://weibo.com/p/1005052265894862/follow?pids=Pl_Official_LeftHisRelation__25&page=11");
             b.DocumentCompleted += b_DocumentCompleted;
         }
 

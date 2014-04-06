@@ -12,29 +12,24 @@ namespace WeiboCrawler
 {
     class WeiboCrawler
     {
+        private ulong _crawleruid = 0;
         private ulong _uid = 0;
         private int _depth = 2;
         private int _currentDepth = 0;
         private HashSet<ulong> _scannedList;
 
+        private int timeStep = 5;//00;
+
         private List<ulong> _current = new List<ulong>();
         private List<ulong> _next = new List<ulong>();
 
         private int _workers = 0;
+        private int _workerid = 0;
 
-        private WeiboWebClient _client;
-        public WeiboWebClient Client
-        {
-            get
-            {
-                return _client;
-            }
-        }
         public WeiboCrawler()
         {            
             _depth = 2;
             _scannedList = new HashSet<ulong>();
-            _client = new WeiboWebClient();
         }
 
         public WeiboCrawler(ulong __uid)
@@ -42,14 +37,24 @@ namespace WeiboCrawler
             _uid = __uid;
             _depth = 2;
             _scannedList = new HashSet<ulong>();
-            _client = new WeiboWebClient();
         }
         public WeiboCrawler(ulong __uid, int __depth)
         {
             _uid = __uid;
             _depth = __depth;
             _scannedList = new HashSet<ulong>();
-            _client = new WeiboWebClient();
+        }
+        public ulong CrawlerUID
+        {
+            get
+            {
+                return _crawleruid;
+            }
+            set
+            {
+                _crawleruid = value;
+            }
+
         }
         public ulong UID
         {
@@ -77,8 +82,6 @@ namespace WeiboCrawler
         /// <summary>
         /// Find users with control of depth and searching list
         /// </summary>
-        /// <param name="_currentDepth">current searching depth</param>
-        /// <param name="__current">current searching list</param>
         private void _findUsers()
         {
             try
@@ -96,11 +99,14 @@ namespace WeiboCrawler
                 }
                 else
                 {
+                    /*
                     foreach (ulong uid in _current)
                     {
                         //TODO: BFS
                         _findUser(uid);
                     }
+                     * */
+                    _findUser(_current[0]);
                 }
             }
             catch (Exception ex)
@@ -113,7 +119,6 @@ namespace WeiboCrawler
         /// Find user followings
         /// </summary>
         /// <param name="__source">The user uid being searched</param>
-        /// <param name="__next">The next searching list</param>
         private void _findUser(ulong __source)
         {
             try
@@ -122,6 +127,7 @@ namespace WeiboCrawler
                 if (_scannedList.Contains(__source))
                 {
                     Console.WriteLine(String.Format("WeiboCrawler: _findUser() __source = {0} already scanned", __source));
+                    _current.Remove(__source);
                     return;
                 }
                 else if (__source <= 0)
@@ -129,33 +135,28 @@ namespace WeiboCrawler
                     Console.WriteLine(String.Format("WeiboCrawler: _findUser() __source = {0} bot valid", __source));
                     return;
                 }
+                else if (__source == _crawleruid)
+                {
+                    Console.WriteLine(String.Format("Skip crawler id {}", __source));
+                    return;
+                }
                 else
                 {
                     //TODO: HTTP Events
                     WebBrowser b = new WebBrowser();
-                    b.Hide();
-                    b.Visible = false;
+                    //b.Hide();
+                    //b.Visible = false;
+                    //b.AllowNavigation = false;
+                    //b.AllowWebBrowserDrop = false;
                     b.Navigate(WeiboWeb.GetFollowUri(__source));
                     _workers++;
+                    _workerid++;
+                    //b.Tag = __source;
+                    b.ScriptErrorsSuppressed = true;
+                    Console.WriteLine(String.Format("new worker initiated {0},{1}", _workers, _workerid));
                     b.DocumentCompleted += b_DocumentCompleted;
-                    b.Disposed += b_Disposed;
                     b.NewWindow += b_NewWindow;
-                    /*
-                    string webDocHtml = getUserFollowingListHtml(__source);
-                
-                    if (webDocHtml != null)
-                    {
-                        MatchCollection collection = WeiboWeb.ParseHtml(webDocHtml);
-                        Console.WriteLine(String.Format("WeiboCrawler: found {0} relation for source {1}", collection.Count, __source));
-                        foreach (Match li in collection)
-                        {
-                            WeiboUser u = new WeiboUser(li, __source);
-                            u.StoreSQLite();
-                            __next.Add(u.UID);
-                        }
-                    }
-                    _scannedList.Add(__source);
-                     * */
+                    b.Disposed += b_Disposed;
                 }
             }
             catch (Exception ex)
@@ -165,23 +166,23 @@ namespace WeiboCrawler
             }
         }
 
-        void b_NewWindow(object sender, System.ComponentModel.CancelEventArgs e)
+        void b_Disposed(object sender, EventArgs e)
         {
-            //throw new NotImplementedException();
-            Console.WriteLine("Browser raised newWindow Event" + e.ToString());
-            Console.WriteLine((sender as WebBrowser).Url);
+            _workers--;
+            Console.WriteLine("Browser Disposed");
         }
 
-        void b_Disposed(object sender, EventArgs e)
+        void b_NewWindow(object sender, System.ComponentModel.CancelEventArgs e)
         {
             try
             {
-                _workers--;
+                e.Cancel = true;
+                Console.WriteLine("Browser raised newWindow Event" + e.ToString());
+                Console.WriteLine((sender as WebBrowser).Url);
             }
-            catch (Exception ex)
+            catch
             {
-                Console.WriteLine("Exception in b_Disposed");
-                Console.WriteLine(ex.Message);
+                Console.WriteLine("Exception in WeiboCrawler.b_NewWindow()");
             }
         }
 
@@ -202,41 +203,51 @@ namespace WeiboCrawler
                             MatchCollection collection = WeiboWeb.ParseHtml(webDocHtml);
                             if (collection!=null)
                             {
-                                Console.WriteLine(String.Format("WeiboCrawler: found {0} relation for source {1}", collection.Count, source));
                                 foreach (Match li in collection)
                                 {
                                     WeiboUser u = new WeiboUser(li, source);
                                     u.StoreText();
                                     _next.Add(u.UID);
                                 }
+                                Console.WriteLine(String.Format("WeiboCrawler: found {0} relation for source {1}, pending {2}, next {3}", collection.Count, source, _current.Count, _next.Count));
                             }
                             else
                             {
                                 Console.WriteLine(String.Format("no match following list for User {0} and Url {1}", source, (sender as WebBrowser).Document.Url));
                             }
                         }
-                        
+
+                        Thread.Sleep(timeStep);
                         String nextPage = WeiboWeb.FindNextPage(webDocHtml);
                         if (nextPage != null)
                         {
-                            (sender as WebBrowser).Navigate(WeiboWeb.BaseUri.Trim('/') + nextPage);
+                            string url = WeiboWeb.BaseUri.Trim('/') + nextPage.Replace("#place","");
+                            Console.WriteLine(String.Format("Going to next page at: {0}", url ));
+                            (sender as WebBrowser).Navigate(url);
                         }
                         else
                         {
                             _current.Remove(source);
                             _scannedList.Add(source);
-                            (sender as WebBrowser).Dispose();
-                            if (_current.Count == 0 && _workers == 0)
+                            //(sender as WebBrowser).Stop();
+                            (sender as IDisposable).Dispose();
+                            Console.WriteLine(String.Format("Browser Task for id {0} Finished! Current workers count is: {1}",source, _workers));
+                            if (_current.Count == 0)
                             {
                                 _current = _next;
                                 _next = new List<ulong>();
                                 _findUsers();
                             }
+                            else
+                            {
+                                //Goto find next current job
+                                _findUser(_current[0]);
+                            }
                         }
                     }
                     else
                     {
-                        (sender as WebBrowser).Dispose();
+                        //Source == Crawler
                     }
                 }
             }
@@ -249,43 +260,20 @@ namespace WeiboCrawler
         
         public void FindUsers()
         {
-            _currentDepth = 0;
-            Console.WriteLine("WeiboCrawler: FindUsers()");
-            _current = new List<ulong>();
-            _current.Add(_uid);
-            _findUsers();
-            Console.WriteLine("WeiboCrawler: Crawling Ended");
-        }
-
-        private string getUserFollowingListHtml(ulong __uid)
-        {
-            if (__uid > 0)
+            try
             {
-                string str = "";
-                try
-                {
-                    str = _client.CustomDownloadString(WeiboWeb.GetFollowUri(__uid));
-                    Console.WriteLine("Request Headers: " + _client.Headers.ToString());
-                    Console.WriteLine("Response Headers: " + _client.ResponseHeaders.ToString());
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                }
-                return str;
+                _currentDepth = 0;
+                Console.WriteLine("WeiboCrawler: FindUsers()");
+                _current = new List<ulong>();
+                _current.Add(_uid);
+                _findUsers();
             }
-            else
+            catch(Exception ex)
             {
-                Console.Write("__uid not defined");
-                return null;
+                Console.WriteLine("Exception in WeiboCrawler.FindUsers()");
+                Console.WriteLine(ex.Message);
             }
-        }
-
-       
-
-        public void SetCookies(Uri __uri, string __cookies)
-        {
-            _client.SetCookies(__uri, __cookies);
+            //Console.WriteLine("WeiboCrawler: Crawling Ended");
         }
     }
 }
